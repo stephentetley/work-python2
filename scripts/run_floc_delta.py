@@ -1,0 +1,29 @@
+
+
+import work_python2.floc_delta.floc_delta as floc_delta
+
+floc_delta.run()
+
+# con = duckdb.connect(":default:")
+
+# execute_sql_script.execute_sql_file('data/test_script.sql', con=con)
+
+# print(con.fetchall())
+
+
+# rel_file_path = "Scripts/asset_replace_gen/01u_attach_databases.sql"
+# execute_sql_script.execute_work_sql_file(rel_file_path, con=con)
+
+# con.execute("SELECT * FROM s4_classes_db.s4_classlists.vw_equi_class_defs LIMIT 3;")
+# print(con.fetchall())
+
+# con.close()
+
+# td = tempfile.gettempdir()
+# print(td)
+
+# dirname = tempfile.mkdtemp(prefix='asset_replace_gen_')
+# print(dirname)
+
+# shutil.rmtree(path=dirname)
+
