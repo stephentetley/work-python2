@@ -47,14 +47,31 @@ def execute_work_sql_script(rel_path: str,
     con = execute_sql_file(script_path=sql_file_path, con=con, parameters=parameters)
     return con
 
-def create_landing_table_via_read_function(*, 
-                                           landing_table_name: str,
-                                           source_file_path: str, 
-                                           read_function: str,
-                                           select_body: str | None = None) -> str:
+def create_landing_table_via_read(*, 
+                                  landing_table_name: str,
+                                  read_function: str,
+                                  source_file_path: str, 
+                                  select_body: str | None = None) -> str:
     select_body = select_body if select_body else "*"
     sql_text = f"""
         CREATE OR REPLACE TABLE {landing_table_name} AS
         SELECT {select_body} FROM {read_function}('{source_file_path}');
     """
     return sql_text
+
+
+def create_landing_table_via_read_union(*,
+                                        landing_table_name: str,
+                                        read_function: str,
+                                        source_file_paths: list[str], 
+                                        select_body: str | None = None) -> str:
+    select_body = select_body if select_body else "*"
+    def make_select_line(path): 
+        return f"(SELECT {select_body} FROM {read_function}('{path}'))"
+    select_lines = [make_select_line(path) for path in source_file_paths]
+    select_unions = "\nUNION\n".join(select_lines)
+    sql_text = f"""
+        CREATE OR REPLACE TABLE {landing_table_name} AS
+        {select_unions};
+    """
+    return sql_text    

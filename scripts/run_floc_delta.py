@@ -2,7 +2,12 @@
 
 import work_python2.floc_delta.floc_delta as floc_delta
 
-floc_delta.run()
+worklist = '/home/stephen/_working/work/2025/floc_delta/bol10/BOL10_floc_delta_worklist.xlsx'
+ih06_files = [
+    '/home/stephen/_working/work/2025/floc_delta/bol10/bol10_ih06_flocs_with_east_north.xlsx'
+]
+
+floc_delta.run(worklist_path=worklist, ih06_exports=ih06_files)
 
 # con = duckdb.connect(":default:")
 

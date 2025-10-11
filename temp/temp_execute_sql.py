@@ -14,9 +14,9 @@ duckdb_utils.execute_sql_file('data/test_script.sql', con=con)
 print(con.fetchall())
 
 
-setup1 = duckdb_utils.create_landing_table_via_read_function(landing_table_name='floc_delta_landing.worklist',
-                                                             source_file_path='/home/stephen/_working/work/2025/floc_delta/bol10/BOL10_floc_delta_worklist.xlsx',
-                                                             read_function='read_floc_delta_worklist')
+setup1 = duckdb_utils.create_landing_table_via_read_union(landing_table_name='floc_delta_landing.worklist',
+                                                          source_file_paths=['/home/stephen/_working/work/2025/floc_delta/bol10/BOL10_floc_delta_worklist.xlsx'],
+                                                          read_function='read_floc_delta_worklist')
 
 print(setup1)
 
