@@ -1,13 +1,30 @@
 
-
+import os
 import work_python2.floc_delta.floc_delta as floc_delta
 
-worklist = '/home/stephen/_working/work/2025/floc_delta/bol10/BOL10_floc_delta_worklist.xlsx'
-ih06_files = [
-    '/home/stephen/_working/work/2025/floc_delta/bol10/bol10_ih06_flocs_with_east_north.xlsx'
+uploader_create_template = os.path.expanduser(
+    f'~/_working/work/2025/excel_uploader/templates/AIW_Floc_Creation_Template_V1.0.xlsx'
+)
+
+worklist  = os.path.expanduser(
+    f'~/_working/work/2025/floc_delta/bol10/BOL10_floc_delta_worklist.xlsx'
+)
+
+ih06_files1 = [
+    f'~/_working/work/2025/floc_delta/bol10/bol10_ih06_flocs_with_east_north.xlsx'
 ]
 
-floc_delta.run(worklist_path=worklist, ih06_exports=ih06_files)
+output_create_xlsx = os.path.expanduser(
+    f'~/_working/work/2025/floc_delta/bol10/bol10_floc_create_upload2.xlsx'
+)
+
+
+ih06_files_expanded = [os.path.expanduser(path) for path in ih06_files1]
+
+floc_delta.run(worklist_path=worklist, 
+               ih06_exports=ih06_files_expanded,
+               eu_floc_create_template=uploader_create_template, 
+               xlsx_output_file=output_create_xlsx)
 
 # con = duckdb.connect(":default:")
 

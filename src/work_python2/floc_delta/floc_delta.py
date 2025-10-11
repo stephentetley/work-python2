@@ -20,20 +20,27 @@ import duckdb
 import tempfile
 import shutil
 import work_python2.common.duckdb_utils as duckdb_utils
+import work_python2.common.excel_uploader_floc_create as excel_uploader_floc_create
 
 
 def run(*, 
         worklist_path: str,
-        ih06_exports: list[str]) -> None: 
+        ih06_exports: list[str],
+        eu_floc_create_template: str,
+        xlsx_output_file: str) -> None: 
     working_dir = tempfile.mkdtemp(prefix='asset_replace_gen_')
     duckdb_path = os.path.normpath(os.path.join(working_dir, 'floc_delta_db.duckdb'))
 
     con = duckdb.connect(database=duckdb_path)
     _exec_scripts(worklist_path=worklist_path, ih06_exports=ih06_exports, con=con)
 
+    excel_uploader_floc_create.write_excel_upload(upload_template_path=eu_floc_create_template,
+                                                  dest=xlsx_output_file,
+                                                  con=con)
+
     con.close()
     # shutil.rmtree(path=working_dir)
-    print("Done")
+    print(f"Created: {xlsx_output_file}")
     
 def _exec_scripts(*, 
                   worklist_path: str,
