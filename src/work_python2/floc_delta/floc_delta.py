@@ -34,9 +34,9 @@ def run(*,
     con = duckdb.connect(database=duckdb_path)
     _exec_scripts(worklist_path=worklist_path, ih06_exports=ih06_exports, con=con)
 
-    excel_uploader_floc_create.write_excel_upload(upload_template_path=eu_floc_create_template,
-                                                  dest=xlsx_output_file,
-                                                  con=con)
+    excel_uploader_floc_create.write_floc_create_upload(upload_template_path=eu_floc_create_template,
+                                                        dest=xlsx_output_file,
+                                                        con=con)
 
     con.close()
     shutil.rmtree(path=working_dir)

@@ -26,10 +26,10 @@ import pandas as pd
 
 # No batching for flocs - dependcies from child to parent flocs 
 # mean we should let the user batch by hand...
-def write_excel_upload(*,
-                       upload_template_path: str, 
-                       dest: str,
-                       con: duckdb.DuckDBPyConnection) -> None: 
+def write_floc_create_upload(*,
+                             upload_template_path: str, 
+                             dest: str,
+                             con: duckdb.DuckDBPyConnection) -> None: 
     shutil.copy(upload_template_path, dest)
     with pd.ExcelWriter(dest, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
         # TODO - dont bother with _write_tab
