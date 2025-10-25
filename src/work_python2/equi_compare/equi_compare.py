@@ -48,7 +48,7 @@ def run(*,
                                                  sheet_name='Sheet1',
                                                  con=con,
                                                  workbook=workbook)
-        print(f"TODO: {output_xlsx_path}")
+        print(f"Created: {output_xlsx_path}")
 
     con.close()
 
@@ -60,22 +60,21 @@ def _exec_equi_compare(*,
                        s4_ih08_exports: list[str],
                        ai2_equi_exports: list[str],
                        con: duckdb.DuckDBPyConnection) -> None:
-    x05a_s4_masterdata_load = duckdb_utils.create_landing_table_via_read_union(landing_table_name='equi_compare_landing.ih08_equi_masterdata',
+    x04a_s4_masterdata_load = duckdb_utils.create_landing_table_via_read_union(landing_table_name='equi_compare_landing.ih08_equi_masterdata',
                                                                          read_function='read_ih08_export',
                                                                          source_file_paths=s4_ih08_exports)
     
-    x05b_ai2_masterdata_load = duckdb_utils.create_landing_table_via_read_union(landing_table_name='equi_compare_landing.ai2_equi_masterdata',
+    x04b_ai2_masterdata_load = duckdb_utils.create_landing_table_via_read_union(landing_table_name='equi_compare_landing.ai2_equi_masterdata',
                                                                                read_function='read_ai2_equi_report',
                                                                                source_file_paths=ai2_equi_exports)
 
-    # TODO 04u contains a hardcoded path
+    # TODO 03u contains a hardcoded path
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/01_create_compare_status_type.sql', con=con)
-    # duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/02u_attach_databases.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/03_setup_tables.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/04u_import_equi_factdata.sql', con=con)
-    con.execute(x05a_s4_masterdata_load)
-    con.execute(x05b_ai2_masterdata_load)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/06_create_report_source_table.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/07_create_report_output_table.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/02_setup_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/03u_import_equi_factdata.sql', con=con)
+    con.execute(x04a_s4_masterdata_load)
+    con.execute(x04b_ai2_masterdata_load)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/05_create_report_source_table.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_compare/06_create_report_output_table.sql', con=con)
 
 
