@@ -21,6 +21,9 @@ import pandas as pd
 
 # Pandas is necessary so we can use `openpyxl` and write into existing 
 # Excel files which have formatting we need to follow.
+# Polars uses `xlsxwriter` - the docs for it state it can't modify existing
+# Excel files.
+
 
 
 

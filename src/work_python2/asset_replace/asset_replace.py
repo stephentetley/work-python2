@@ -111,6 +111,7 @@ def _exec_asset_replace(*,
                                                                            read_function='read_ai2_export_eavdata',
                                                                            source_file_paths=eav_source_list
                                                                            )
+    # TODO 01u and 02u have hard coded paths
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/01u_copy_databases.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/02u_attach_databases.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/03_create_translation_utility_macros.sql', con=con)

@@ -7,15 +7,15 @@ uploader_create_template = os.path.expanduser(
 )
 
 worklist  = os.path.expanduser(
-    f'~/_working/work/2025/capital_schemes/bol10/flocs/BOL10_floc_delta_worklist.xlsx'
+    f'~/_working/work/2025/capital_schemes/hai11/flocs/hai11_floc_delta_worklist.xlsx'
 )
 
 ih06_files1 = [
-    f'~/_working/work/2025/capital_schemes/bol10/flocs/bol10_ih06_flocs_with_east_north.xlsx'
+    f'~/_working/work/2025/capital_schemes/hai11/flocs/hai11_ih06_with_east_north.xlsx'
 ]
 
 output_create_xlsx = os.path.expanduser(
-    f'~/_working/work/2025/capital_schemes/bol10/flocs/bol10_floc_create_NEW.xlsx'
+    f'~/_working/work/2025/capital_schemes/hai11/flocs/hai11_floc_create_NEW.xlsx'
 )
 
 

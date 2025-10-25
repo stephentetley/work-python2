@@ -21,10 +21,12 @@ import pandas as pd
 
 # Pandas is necessary so we can use `openpyxl` and write into existing 
 # Excel files which have formatting we need to follow.
+# Polars uses `xlsxwriter` - the docs for it state it can't modify existing
+# Excel files.
 
 
 
-# No batching for flocs - dependcies from child to parent flocs 
+# No batching for flocs - dependencies from child to parent flocs 
 # mean we should let the user batch by hand...
 def write_floc_create_upload(*,
                              upload_template_path: str, 
