@@ -31,7 +31,7 @@ def execute_sql_file(script_path: str,
                 con.commit()
                 return con
             except Exception as exn: 
-                print(f"SQL script failed:")
+                print(f"SQL script failed: {script_path}")
                 print(statements)
                 print(exn)
                 raise(exn)
