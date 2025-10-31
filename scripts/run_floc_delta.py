@@ -1,27 +1,25 @@
 
-import os
+# Expected to be called from a Makefile as arg list is complex
+
+
+from argparse import ArgumentParser
 import work_python2.floc_delta.floc_delta as floc_delta
 
-uploader_create_template = os.path.expanduser(
-    f'~/_working/work/2025/excel_uploader/templates/AIW_Floc_Creation_Template_V1.0.xlsx'
-)
+def main(): 
+    parser = ArgumentParser(description='Generate new flocs')
+    parser.add_argument("--create_template_file", dest='uploader_create_template', required=True, help="Path to _create_ template file")
+    parser.add_argument("--worklist", dest='worklist', required=True, help="Worklist file")
+    parser.add_argument("--ih06_export", dest='ih06_export', action="append", help="IH06 export file (can be >1)")
+    parser.add_argument("--output_create_xlsx", dest='output_create_xlsx', help="Output file")
+    args = parser.parse_args()
+    uploader_create_template = args.uploader_create_template
+    worklist = args.worklist
+    ih06_exports = args.ih06_export if args.ih06_export else []
+    output_create_xlsx = args.output_create_xlsx if args.output_create_xlsx else 'create_equi.xlsx'
 
-worklist  = os.path.expanduser(
-    f'~/_working/work/2025/capital_schemes/hai11/flocs/hai11_floc_delta_worklist.xlsx'
-)
+    floc_delta.run(worklist_path=worklist,
+                   ih06_exports=ih06_exports,
+                   eu_floc_create_template=uploader_create_template, 
+                   xlsx_output_file=output_create_xlsx)
 
-ih06_files1 = [
-    f'~/_working/work/2025/capital_schemes/hai11/flocs/hai11_ih06_with_east_north.xlsx'
-]
-
-output_create_xlsx = os.path.expanduser(
-    f'~/_working/work/2025/capital_schemes/hai11/flocs/hai11_floc_create_NEW.xlsx'
-)
-
-
-ih06_files_expanded = [os.path.expanduser(path) for path in ih06_files1]
-
-floc_delta.run(worklist_path=worklist, 
-               ih06_exports=ih06_files_expanded,
-               eu_floc_create_template=uploader_create_template, 
-               xlsx_output_file=output_create_xlsx)
+main()

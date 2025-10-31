@@ -1,6 +1,6 @@
 # Expected to be called from a Makefile as arg list is complex
 
-import os
+
 from argparse import ArgumentParser
 import work_python2.asset_replace.asset_replace as asset_replace
 

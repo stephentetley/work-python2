@@ -1,0 +1,17 @@
+# Makefile
+
+WORKLIST = GAR10_floc_delta_worklist.xlsx
+IH06DATA1 = ih06_gar10_export_with_EN.xlsx
+OUTFILE = gar10_floc_create_NEW.xlsx
+
+
+
+all:
+	export PYTHONPATH=~/_working/coding/work/work-python2/src ; \
+	export WORK_SQL_ROOT=~/_working/coding/work/work-sql ; \
+	conda run -n develop-env python ~/_working/coding/work/work-python2/scripts/run_floc_delta.py \
+	--create_template_file ~/_working/work/2025/excel_uploader/templates/AIW_Floc_Creation_Template_V1.0.xlsx \
+	--worklist $(WORKLIST) \
+	--ih06_export $(IH06DATA1) \
+	--output_create_xlsx $(OUTFILE)
+
