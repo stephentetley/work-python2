@@ -1,0 +1,24 @@
+# Makefile
+
+WORKLIST = SHE29_assetrep_worklist.xlsx
+MASTERDATA = ai2_equi_masterdata.xlsx
+EAVDATA1 = ai2_equi_eavdata_slipra.xlsx
+OUTFILE = she29_equi_create_NEW.xlsx
+
+ifdef EAVDATA1
+EAV_ARG := --ai2_eav_export $(EAVDATA1)
+else
+EAV_ARG :=
+endif
+
+all:
+	export PYTHONPATH=~/_working/coding/work/work-python2/src ; \
+	export WORK_SQL_ROOT=~/_working/coding/work/work-sql ; \
+	conda run -n develop-env python ~/_working/coding/work/work-python2/scripts/run_asset_replace.py \
+	--create_template_file ~/_working/work/2025/excel_uploader/templates/AIW_Equi_Creation_Template_V1.0.xlsx \
+	--change_template_file ~/_working/work/2025/excel_uploader/templates/AIW_Equi_Change_Template_V1.0.xlsx \
+	--worklist $(WORKLIST) \
+	--ai2_masterdata_export $(MASTERDATA) \
+	$(EAV_ARG) \
+	--output_create_xlsx $(OUTFILE)
+
