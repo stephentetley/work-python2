@@ -32,20 +32,20 @@ def run(*,
         eu_equi_change_template: str,
         create_xlsx_output_file: str | None = None,
         change_xlsx_output_file: str | None = None) -> None: 
-    working_dir = tempfile.mkdtemp(prefix='asset_replace_')
-    duckdb_gen_path = os.path.normpath(os.path.join(working_dir, 'asset_replace_gen_db.duckdb'))
+    working_dir = tempfile.mkdtemp(prefix='equi_create_')
+    duckdb_gen_path = os.path.normpath(os.path.join(working_dir, 'equi_create_gen_db.duckdb'))
     con1 = duckdb.connect(database=duckdb_gen_path)
     
-    _exec_asset_replace_gen(worklist_path=worklist_path, 
+    _exec_equi_create_gen(worklist_path=worklist_path, 
                             ai2_masterdata_path=ai2_masterdata_path, 
                             con=con1)
 
     con1.close()
     
-    duckdb_assetrep_path = os.path.normpath(os.path.join(working_dir, 'asset_replace_db.duckdb'))
+    duckdb_assetrep_path = os.path.normpath(os.path.join(working_dir, 'equi_create_db.duckdb'))
     con2 = duckdb.connect(database=duckdb_assetrep_path)
 
-    _exec_asset_replace(worklist_path=worklist_path, 
+    _exec_equi_create(worklist_path=worklist_path, 
                         ai2_masterdata_path=ai2_masterdata_path,
                         ai2_eav_exports=ai2_eav_exports,                         
                         con=con2)
@@ -68,32 +68,32 @@ def run(*,
 
 
 
-def _exec_asset_replace_gen(*, 
+def _exec_equi_create_gen(*, 
                             worklist_path: str,
                             ai2_masterdata_path: str,
                             con: duckdb.DuckDBPyConnection) -> None:
-    x03a_worklist_sql = duckdb_utils.create_landing_table_via_read(landing_table_name='asset_replace_gen.s4_equipment',
+    x03a_worklist_sql = duckdb_utils.create_landing_table_via_read(landing_table_name='equi_create_gen.s4_equipment',
                                                                            read_function='read_worklist_for_s4_classes',
                                                                            source_file_path=worklist_path)
     
-    x03b_ai2_masterdata_sql = duckdb_utils.create_landing_table_via_read(landing_table_name='asset_replace_gen.ai2_equipment ',
+    x03b_ai2_masterdata_sql = duckdb_utils.create_landing_table_via_read(landing_table_name='equi_create_gen.ai2_equipment ',
                                                                          read_function='read_ai2_masterdata_for_equipment',
                                                                          source_file_path=ai2_masterdata_path)
 
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/01u_attach_databases.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/02_create_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/01u_attach_databases.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/02_create_tables.sql', con=con)
     con.execute(x03a_worklist_sql)
     con.execute(x03b_ai2_masterdata_sql)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/04_gen_ai2_classrep_tables.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/05_gen_s4_classrep_tables.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/06_gen_ai2_eav_to_classrep_macros.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/07_gen_s4_classrep_insert_into.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/08_gen_s4_classrep_to_excel_uploader_chars.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/09u_copy_to_output_files.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace_gen/10_detach_databases.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/04_gen_ai2_classrep_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/05_gen_s4_classrep_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/06_gen_ai2_eav_to_classrep_macros.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/07_gen_s4_classrep_insert_into.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/08_gen_s4_classrep_to_excel_uploader_chars.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/09u_copy_to_output_files.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create_gen/10_detach_databases.sql', con=con)
 
 
-def _exec_asset_replace(*, 
+def _exec_equi_create(*, 
                         worklist_path: str,
                         ai2_masterdata_path: str,
                         ai2_eav_exports: list[str],
@@ -112,26 +112,26 @@ def _exec_asset_replace(*,
                                                                            source_file_paths=eav_source_list
                                                                            )
     # TODO 01u and 02u have hard coded paths
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/01u_copy_databases.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/02u_attach_databases.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/03_create_translation_utility_macros.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/04_create_classrep_translation_macros.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/05_create_read_sources_macros.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/06_ai2_eav_create_tables.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/07_ai2_classrep_create_master_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/01u_copy_databases.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/02u_attach_databases.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/03_create_translation_utility_macros.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/04_create_classrep_translation_macros.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/05_create_read_sources_macros.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/06_ai2_eav_create_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/07_ai2_classrep_create_master_tables.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/08g_ai2_classrep_create_equiclass_tables.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/09_s4_classrep_create_master_tables.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/09_s4_classrep_create_master_tables.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/10g_s4_classrep_create_equiclass_tables.sql', con=con)
     con.execute(x11a_landing_worklist_sql)
     con.execute(x11b_ai2_masterdata_sql)
     con.execute(x11_ai2_eavdata_sql)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/12_data_copy_ai2_eav_to_classrep_masterdata.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/12_data_copy_ai2_eav_to_classrep_masterdata.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/13g_data_copy_ai2_eav_to_classrep_equiclass.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/14_data_copy_ai2_to_s4_classrep_masterdata.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/14_data_copy_ai2_to_s4_classrep_masterdata.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/15g_delete_from_s4_classrep_tables.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/16g_insert_into_s4_classrep_tables.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/17_data_copy_s4_classrep_to_eu_create_masterdata.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/17_data_copy_s4_classrep_to_eu_create_masterdata.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/18g_data_copy_s4_classrep_to_eu_create_eavdata.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/19_data_copy_worklist_to_eu_change.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/asset_replace/20_detach_databases.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/19_data_copy_worklist_to_eu_change.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/20_detach_databases.sql', con=con)
 

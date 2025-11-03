@@ -2,7 +2,7 @@
 
 
 from argparse import ArgumentParser
-import work_python2.asset_replace.asset_replace as asset_replace
+import work_python2.equi_create.equi_create as equi_create
 
 def main(): 
     parser = ArgumentParser(description='Generate new equipment')
@@ -20,7 +20,7 @@ def main():
     ai2_eav_exports = args.ai2_eav_export if args.ai2_eav_export else []
     output_create_xlsx = args.output_create_xlsx if args.output_create_xlsx else 'create_equi.xlsx'
 
-    asset_replace.run(worklist_path=worklist, 
+    equi_create.run(worklist_path=worklist, 
                     ai2_masterdata_path=ai2_masterdata_export,
                     ai2_eav_exports=ai2_eav_exports,
                     eu_equi_create_template=uploader_create_template,
