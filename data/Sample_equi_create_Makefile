@@ -14,9 +14,8 @@ endif
 all:
 	export PYTHONPATH=~/_working/coding/work/work-python2/src ; \
 	export WORK_SQL_ROOT=~/_working/coding/work/work-sql ; \
-	conda run -n develop-env python ~/_working/coding/work/work-python2/scripts/run_asset_replace.py \
+	conda run -n develop-env python ~/_working/coding/work/work-python2/scripts/run_equi_create.py \
 	--create_template_file ~/_working/work/2025/excel_uploader/templates/AIW_Equi_Creation_Template_V1.0.xlsx \
-	--change_template_file ~/_working/work/2025/excel_uploader/templates/AIW_Equi_Change_Template_V1.0.xlsx \
 	--worklist $(WORKLIST) \
 	--ai2_masterdata_export $(MASTERDATA) \
 	$(EAV_ARG) \

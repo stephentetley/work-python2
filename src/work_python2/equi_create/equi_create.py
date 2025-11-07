@@ -29,9 +29,7 @@ def run(*,
         ai2_masterdata_path: str,
         ai2_eav_exports: list[str],
         eu_equi_create_template: str,
-        eu_equi_change_template: str,
-        create_xlsx_output_file: str | None = None,
-        change_xlsx_output_file: str | None = None) -> None: 
+        create_xlsx_output_file: str | None = None) -> None: 
     working_dir = tempfile.mkdtemp(prefix='equi_create_')
     duckdb_gen_path = os.path.normpath(os.path.join(working_dir, 'equi_create_gen_db.duckdb'))
     con1 = duckdb.connect(database=duckdb_gen_path)
@@ -55,12 +53,6 @@ def run(*,
                                                              dest=create_xlsx_output_file,
                                                              con=con2)
         print(f"Created: {create_xlsx_output_file}")
-
-    if change_xlsx_output_file:
-        excel_uploader_equi_change.write_equi_change_uploads(upload_template_path=eu_equi_change_template,
-                                                             dest=change_xlsx_output_file,
-                                                             con=con2)
-        print(f"Created: {change_xlsx_output_file}")
 
     con2.close()
 
@@ -132,6 +124,5 @@ def _exec_equi_create(*,
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/16g_insert_into_s4_classrep_tables.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/17_data_copy_s4_classrep_to_eu_create_masterdata.sql', con=con)
     duckdb_utils.execute_work_sql_script(rel_path='Scripts/output/18g_data_copy_s4_classrep_to_eu_create_eavdata.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/19_data_copy_worklist_to_eu_change.sql', con=con)
-    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/20_detach_databases.sql', con=con)
+    duckdb_utils.execute_work_sql_script(rel_path='Scripts/equi_create/19_detach_databases.sql', con=con)
 

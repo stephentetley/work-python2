@@ -39,7 +39,7 @@ def run(*,
                                                         con=con)
 
     con.close()
-    shutil.rmtree(path=working_dir)
+    # shutil.rmtree(path=working_dir)
     print(f"Created: {xlsx_output_file}")
     
 def _exec_scripts(*, 
