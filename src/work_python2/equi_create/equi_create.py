@@ -91,7 +91,7 @@ def _exec_equi_create(*,
                         ai2_eav_exports: list[str],
                         con: duckdb.DuckDBPyConnection) -> None:
     x11a_landing_worklist_sql = duckdb_utils.create_landing_table_via_read(landing_table_name='ai2_landing.worklist',
-                                                                           read_function='read_equi_replace_worklist',
+                                                                           read_function='read_equi_create_worklist',
                                                                            source_file_path=worklist_path)
     
     x11b_ai2_masterdata_sql = duckdb_utils.create_landing_table_via_read(landing_table_name='ai2_landing.masterdata',
