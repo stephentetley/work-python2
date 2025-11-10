@@ -29,7 +29,8 @@ def run(*,
         ai2_masterdata_path: str,
         ai2_eav_exports: list[str],
         eu_equi_create_template: str,
-        create_xlsx_output_file: str | None = None) -> None: 
+        create_xlsx_output_file: str | None = None, 
+        change_rec_name: str | None = None) -> None: 
     working_dir = tempfile.mkdtemp(prefix='equi_create_')
     duckdb_gen_path = os.path.normpath(os.path.join(working_dir, 'equi_create_gen_db.duckdb'))
     con1 = duckdb.connect(database=duckdb_gen_path)
@@ -47,6 +48,15 @@ def run(*,
                         ai2_masterdata_path=ai2_masterdata_path,
                         ai2_eav_exports=ai2_eav_exports,                         
                         con=con2)
+
+    if change_rec_name:
+        insert_stmt = f"""
+            INSERT INTO excel_uploader_equi_create.change_request_header 
+                BY POSITION(change_request_decription)
+                VALUES ('{change_rec_name}');
+        """
+        
+        con2.execute(insert_stmt)
 
     if create_xlsx_output_file:
         excel_uploader_equi_create.write_equi_create_uploads(upload_template_path=eu_equi_create_template,

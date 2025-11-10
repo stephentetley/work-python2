@@ -55,11 +55,7 @@ def _gen_excel_upload1(*,
                                index=False,
                                header=False)
         notes_query = f"""
-            SELECT * FROM excel_uploader_equi_create.change_request_notes
-            UNION 
-            SELECT 'Batch number {batch_number}' AS usmd_note
-            UNION
-            SELECT 'Upload file created on ' || strftime(current_date, '%d.%m.%Y') AS usmd_note;
+            SELECT * FROM excel_uploader_equi_create.change_request_notes;
         """
         notes_pandas = con.sql(notes_query).df()
         notes_pandas.to_excel(writer,
