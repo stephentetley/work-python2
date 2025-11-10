@@ -21,7 +21,6 @@ import tempfile
 import shutil
 import work_python2.common.duckdb_utils as duckdb_utils
 import work_python2.common.excel_uploader_equi_create as excel_uploader_equi_create
-import work_python2.common.excel_uploader_equi_change as excel_uploader_equi_change
 
 
 def run(*, 
@@ -30,7 +29,8 @@ def run(*,
         ai2_eav_exports: list[str],
         eu_equi_create_template: str,
         create_xlsx_output_file: str | None = None, 
-        change_rec_name: str | None = None) -> None: 
+        change_rec_name: str | None = None, 
+        change_rec_number: int | None = None) -> None: 
     working_dir = tempfile.mkdtemp(prefix='equi_create_')
     duckdb_gen_path = os.path.normpath(os.path.join(working_dir, 'equi_create_gen_db.duckdb'))
     con1 = duckdb.connect(database=duckdb_gen_path)
@@ -55,7 +55,14 @@ def run(*,
                 BY POSITION(change_request_decription)
                 VALUES ('{change_rec_name}');
         """
-        
+        con2.execute(insert_stmt)
+
+    elif change_rec_number:
+        insert_stmt = f"""
+            INSERT INTO excel_uploader_equi_create.change_request_header 
+                BY POSITION(usmd_crequest)
+                VALUES ('{change_rec_number}');
+        """
         con2.execute(insert_stmt)
 
     if create_xlsx_output_file:

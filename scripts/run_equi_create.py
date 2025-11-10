@@ -11,7 +11,8 @@ def main():
     parser.add_argument("--ai2_masterdata_export", dest='ai2_masterdata_export', required=True, help="AI2 Masterdata export file")
     parser.add_argument("--ai2_eav_export", dest='ai2_eav_export', action="append", help="AI2 eavdata export file (can be >1)")
     parser.add_argument("--output_create_xlsx", dest='output_create_xlsx', help="Output file")
-    parser.add_argument("--change_rec_name", dest='change_rec_name', required=False, help="Change request name")
+    parser.add_argument("--change_rec_name", dest='change_rec_name', required=False, help="Change request name [don't include number]")
+    parser.add_argument("--change_rec_number", dest='change_rec_number', required=False, help="Change request number [don't include name]")
     args = parser.parse_args()
     uploader_create_template = args.uploader_create_template
     worklist = args.worklist
@@ -19,6 +20,7 @@ def main():
     ai2_eav_exports = args.ai2_eav_export if args.ai2_eav_export else []
     output_create_xlsx = args.output_create_xlsx if args.output_create_xlsx else 'create_equi.xlsx'
     change_rec_name = args.change_rec_name
+    change_rec_number = args.change_rec_number
 
 
     equi_create.run(eu_equi_create_template=uploader_create_template,
@@ -26,7 +28,8 @@ def main():
                     ai2_masterdata_path=ai2_masterdata_export,
                     ai2_eav_exports=ai2_eav_exports,
                     create_xlsx_output_file=output_create_xlsx,
-                    change_rec_name=change_rec_name)
+                    change_rec_name=change_rec_name,
+                    change_rec_number=change_rec_number)
 
 
 main()
