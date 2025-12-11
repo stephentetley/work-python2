@@ -16,6 +16,7 @@ limitations under the License.
 """
 
 import os
+import glob
 import duckdb
 import tempfile
 import shutil
@@ -26,12 +27,18 @@ import work_python2.common.excel_uploader_floc_create as excel_uploader_floc_cre
 def run(*, 
         worklist_path: str,
         ih06_exports: list[str],
+        ih06_glob: str|None,
         eu_floc_create_template: str,
         xlsx_output_file: str) -> None: 
     working_dir = tempfile.mkdtemp(prefix='asset_replace_gen_')
     duckdb_path = os.path.normpath(os.path.join(working_dir, 'floc_delta_db.duckdb'))
 
     con = duckdb.connect(database=duckdb_path)
+    if ih06_glob:
+        for filename in glob.glob(ih06_glob):
+            print(filename)
+            ih06_exports.append(filename)
+
     _exec_scripts(worklist_path=worklist_path, ih06_exports=ih06_exports, con=con)
 
     excel_uploader_floc_create.write_floc_create_upload(upload_template_path=eu_floc_create_template,
