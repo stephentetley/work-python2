@@ -25,26 +25,28 @@ import pandas as pd
 # Excel files.
 
 
+def write_equi_create_uploads(*,
+                              upload_template_path: str, 
+                              dest: str,
+                              con: duckdb.DuckDBPyConnection) -> None: 
+    rs = con.execute("SELECT max(batch_number) FROM excel_uploader_floc_create.batch_worklist;").fetchone();
+    for batch_number in range(1, rs[0] + 1, 1):
+        # print(f"Creating batch{batch_number}")
+        _gen_excel_upload1(upload_template_path=upload_template_path, 
+                        dest=dest,
+                        batch_number=batch_number,
+                        con=con)
+        
 
-# No batching for flocs - dependencies from child to parent flocs 
-# mean we should let the user batch by hand...
-def write_floc_create_upload(*,
-                             upload_template_path: str, 
-                             dest: str,
-                             con: duckdb.DuckDBPyConnection) -> None: 
+# Note - the user must ensure parent and child flocs are in the same batch
+def _gen_excel_upload1(*,
+                       upload_template_path: str, 
+                       dest: str,
+                       batch_number: int,
+                       con: duckdb.DuckDBPyConnection) -> None: 
+    dest = dest.replace(".xlsx", f"_batch{batch_number}.xlsx")
     shutil.copy(upload_template_path, dest)
     with pd.ExcelWriter(dest, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-        # TODO - dont bother with _write_tab
-        def _write_tab(*, sel_stmt: str, sheet_name: str) -> None:
-            pandas_df = con.sql(sel_stmt).df()
-            pandas_df.to_excel(
-                    writer,
-                    sheet_name=sheet_name,
-                    startcol=0,
-                    startrow=5,
-                    index=False,
-                    header=False,
-                )  
         header_pandas = con.sql("SELECT * FROM excel_uploader_floc_create.vw_change_request_header;").df()
         header_pandas.to_excel(writer,
                                sheet_name='Change Request Header',
@@ -52,16 +54,22 @@ def write_floc_create_upload(*,
                                startrow=5,
                                index=False,
                                header=False) 
-        
-        notes_pandas = con.sql("SELECT * FROM excel_uploader_floc_create.change_request_notes;").df()
+        notes_query = f"""
+            SELECT * FROM excel_uploader_floc_create.change_request_notes;
+        """
+        notes_pandas = con.sql(notes_query).df()
         notes_pandas.to_excel(writer,
                               sheet_name='Change Request Notes',
                               startcol=0,
                               startrow=4,
                               index=False,
                               header=False) 
-        
-        floc_pandas = con.sql("SELECT * FROM excel_uploader_floc_create.vw_functional_location;").df()
+        floc_query = f"""
+            SELECT * EXCLUDE(batch_number)
+            FROM excel_uploader_floc_create.vw_functional_location
+            WHERE batch_number = {batch_number};            
+        """
+        floc_pandas = con.sql(floc_query).df()
         floc_pandas.to_excel(writer,
                              sheet_name='FLOC-Functional Location',
                              startcol=0,
@@ -69,7 +77,12 @@ def write_floc_create_upload(*,
                              index=False,
                              header=False) 
         
-        floc_chars_pandas = con.sql("SELECT * FROM excel_uploader_floc_create.vw_classification;").df()
+        floc_char_query = f"""
+            SELECT * EXCLUDE (batch_number) 
+            FROM excel_uploader_floc_create.vw_classification
+            WHERE batch_number = {batch_number};
+        """
+        floc_chars_pandas = con.sql(floc_char_query).df()
         floc_chars_pandas.to_excel(writer,
                                    sheet_name='FLOC-Classification',
                                    startcol=0,
