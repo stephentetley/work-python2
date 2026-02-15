@@ -37,7 +37,7 @@ def insert_title_format_string(*,
 
         
 
-def write_equi_create_uploads(*,
+def write_floc_create_uploads(*,
                               upload_template_path: str, 
                               dest: str,
                               con: duckdb.DuckDBPyConnection) -> None: 
@@ -61,9 +61,9 @@ def _gen_excel_upload1(*,
     with pd.ExcelWriter(dest, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
         header_query = f"""
             SELECT 
-                usmd_crequest,
-                format(change_request_decription, {batch_number}, strftime(today(), '%d.%m.%y')),
-            FROM excel_uploader_floc_create.vw_change_request_header;
+                t.* REPLACE (
+                format(t."Change Request Description", {batch_number}, strftime(today(), '%d.%m.%y')) AS "Change Request Description"),
+            FROM excel_uploader_floc_create.vw_change_request_header t;
         """
         header_pandas = con.sql(header_query).df()
         header_pandas.to_excel(writer,
