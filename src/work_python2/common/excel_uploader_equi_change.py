@@ -25,6 +25,16 @@ import pandas as pd
 # Excel files.
 
 
+def insert_title_format_string(*,
+                              title_format: str, 
+                              con: duckdb.DuckDBPyConnection) -> None:
+    con.execute("DELETE FROM excel_uploader_equi_change.change_request_header")
+    update_stmt = f"""
+        INSERT INTO excel_uploader_equi_change.change_request_header BY NAME
+        SELECT '{title_format}' AS change_request_decription; 
+    """ 
+    con.execute(update_stmt)
+
     
 def write_equi_change_uploads(*,
                               upload_template_path: str, 
@@ -42,10 +52,16 @@ def _gen_excel_upload1(*,
                        dest: str,
                        batch_number: int,
                        con: duckdb.DuckDBPyConnection) -> None: 
-    dest = dest.replace(".xlsx", f"_batch{batch_number}.xlsx")    
+    dest = dest.format(batch_number)
     shutil.copy(upload_template_path, dest)
     with pd.ExcelWriter(dest, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-        header_pandas = con.sql("SELECT * FROM excel_uploader_equi_change.vw_change_request_header;").df()
+        header_query = f"""
+            SELECT 
+                t.* REPLACE (
+                format(t."Change Request Description", {batch_number}, strftime(today(), '%d.%m.%y')) AS "Change Request Description"),
+            FROM excel_uploader_equi_change.vw_change_request_header t;
+        """
+        header_pandas = con.sql(header_query).df()
         header_pandas.to_excel(
             writer,
             sheet_name='Change Request Header',
