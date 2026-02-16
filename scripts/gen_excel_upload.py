@@ -25,19 +25,19 @@ def main():
 
 
     con = duckdb.connect(database=duckdb_path, read_only=False)
-    if excel_uploader_output_type=='floc_create':
+    if excel_uploader_output_type.lower() == 'floc_create':
         excel_uploader_floc_create.insert_title_format_string(title_format=title, 
                                                               con=con)
         excel_uploader_floc_create.write_floc_create_uploads(upload_template_path=uploader_template_file,
                                                             dest=output_xlsx_file,
                                                             con=con)
-    elif excel_uploader_output_type=='equi_create':
+    elif excel_uploader_output_type.lower() == 'equi_create':
         excel_uploader_equi_create.insert_title_format_string(title_format=title, 
                                                               con=con)
         excel_uploader_equi_create.write_equi_create_uploads(upload_template_path=uploader_template_file,
                                                             dest=output_xlsx_file,
                                                             con=con)
-    elif excel_uploader_output_type=='equi_change':
+    elif excel_uploader_output_type.lower() == 'equi_change':
         excel_uploader_equi_change.insert_title_format_string(title_format=title, 
                                                               con=con)
         excel_uploader_equi_change.write_equi_change_uploads(upload_template_path=uploader_template_file,
