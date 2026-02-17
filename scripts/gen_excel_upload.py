@@ -20,7 +20,8 @@ def main():
     excel_uploader_output_type = args.excel_uploader_output_type
     title = args.title if args.title else "Batch_{0:02} {1}"
 
-    if not re.search(r"\{\}", output_xlsx_file):
+    if not re.search(r"\{.*\}", output_xlsx_file):
+        print("Adding batch suffix to the file names...")
         output_xlsx_file = output_xlsx_file.replace(".xlsx", "_batch{0}.xlsx") 
 
 
